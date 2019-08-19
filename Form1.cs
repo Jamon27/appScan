@@ -11,12 +11,16 @@ using System.Diagnostics;
 using System.Runtime.InteropServices;
 using System.Windows.Automation;
 using System.Text.RegularExpressions;
+using System.Data.SQLite;
+using System.IO;
+
+
 
 namespace Подключение_к_БД_ver_2._0
 {
     public partial class Form1 : Form
     {
-
+        SQLiteConnection liteConnection = new SQLiteConnection();
 
         [DllImport("user32.dll")]
         static extern int GetForegroundWindow();
@@ -30,7 +34,7 @@ namespace Подключение_к_БД_ver_2._0
         {
             InitializeComponent();
         }
-
+        //
         private void button1_Click(object sender, EventArgs e)
         {
             Process[] processes = Process.GetProcesses();
@@ -141,10 +145,35 @@ namespace Подключение_к_БД_ver_2._0
                 textBox1.Text = "Google Chrome";
             }
         }
+
             private void button2_Click(object sender, EventArgs e)
         {
             timer1.Start();
            
+        }
+
+        private void button3_Click(object sender, EventArgs e)
+        {
+            string baseName = "timeLog.db3";            
+            if (File.Exists(baseName))
+            {
+                Console.WriteLine("There is file " + baseName);
+            }
+            else
+            {
+                SQLiteConnection.CreateFile(baseName);
+            }
+
+            if (liteConnection.State.ToString()=="Closed")
+            {
+                liteConnection.ConnectionString = @"Data Source = " + baseName;
+                liteConnection.Open();
+            }
+
+
+
+
+
         }
     }
 }

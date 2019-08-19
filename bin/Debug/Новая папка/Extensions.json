@@ -1,0 +1,206 @@
+{
+    "Extensions": [
+        {
+            "incognito_enabled": false,
+            "remote_install": false,
+            "disable_reasons": 0,
+            "installed_by_custodian": false,
+            "update_url": "https://clients2.google.com/service/update2/crx",
+            "name": "VK Messages Visual Statistics",
+            "id": "chhkkciiljiehmmfgmodhaaljggikhmc",
+            "version": "1.1.6",
+            "enabled": true
+},
+        {
+            "incognito_enabled": true,
+            "remote_install": false,
+            "disable_reasons": 0,
+            "installed_by_custodian": false,
+            "update_url": "https://clients2.google.com/service/update2/crx",
+            "name": "friGate CDN - бесперебойный доступ к сайтам",
+            "id": "mbacbcfdfaapbcnlnbmciiaakomhkbkb",
+            "version": "2.1.170",
+            "enabled": true
+},
+        {
+            "incognito_enabled": false,
+            "remote_install": false,
+            "disable_reasons": 0,
+            "installed_by_custodian": false,
+            "update_url": "https://clients2.google.com/service/update2/crx",
+            "name": "RescueTime for Chrome and Chrome OS",
+            "id": "bdakmnplckeopfghnlpocafcepegjeap",
+            "version": "3.2.3",
+            "enabled": true
+},
+        {
+            "incognito_enabled": false,
+            "remote_install": false,
+            "disable_reasons": 0,
+            "installed_by_custodian": false,
+            "update_url": "https://clients2.google.com/service/update2/crx",
+            "name": "Блокировка рекламы для Youtube™",
+            "id": "cmedhionkhpnakcndndgjdbohmhepckk",
+            "version": "5.0.9",
+            "enabled": true
+},
+        {
+            "incognito_enabled": false,
+            "remote_install": false,
+            "disable_reasons": 1,
+            "installed_by_custodian": false,
+            "update_url": "https://clients2.google.com/service/update2/crx",
+            "name": "Hotspot Shield VPN Free Proxy \u2013 Unblock Sites",
+            "id": "nlbejmccbhkncgokjcmghpfloaajcffj",
+            "version": "3.5.65",
+            "enabled": false
+},
+        {
+            "incognito_enabled": false,
+            "remote_install": false,
+            "disable_reasons": 0,
+            "installed_by_custodian": false,
+            "update_url": "https://clients2.google.com/service/update2/crx",
+            "name": "uBlock Origin",
+            "id": "cjpalhdlnbpafiamejdnhcphjbkeiagm",
+            "version": "1.21.6",
+            "enabled": true
+},
+        {
+            "incognito_enabled": true,
+            "remote_install": false,
+            "disable_reasons": 0,
+            "installed_by_custodian": false,
+            "update_url": "https://clients2.google.com/service/update2/crx",
+            "name": "AdBlock",
+            "id": "gighmmpiobklfepjocnamgkkbiglidom",
+            "version": "3.51.1",
+            "enabled": true
+},
+        {
+            "incognito_enabled": false,
+            "remote_install": false,
+            "disable_reasons": 0,
+            "installed_by_custodian": false,
+            "update_url": "https://clients2.google.com/service/update2/crx",
+            "name": "Node.js V8 --inspector Manager (NiM)",
+            "id": "gnhhdgbaldcilmgcpfddgdbkhjohddkj",
+            "version": "2.2.2",
+            "enabled": true
+},
+        {
+            "incognito_enabled": false,
+            "remote_install": false,
+            "disable_reasons": 0,
+            "installed_by_custodian": false,
+            "update_url": "https://clients2.google.com/service/update2/crx",
+            "name": "Adblock Plus - бесплатный блокировщик рекламы",
+            "id": "cfhdojbkjhnklbpkdaibdccddilifddb",
+            "version": "3.6.2",
+            "enabled": true
+},
+        {
+            "incognito_enabled": false,
+            "remote_install": false,
+            "disable_reasons": 1,
+            "installed_by_custodian": false,
+            "update_url": "https://clients2.google.com/service/update2/crx",
+            "name": "Hola Free VPN Proxy Unblocker",
+            "id": "gkojfkhlekighikafcpjkiklfbnlmeio",
+            "version": "1.147.262",
+            "enabled": false
+}
+    ],
+    "Extension Settings": [
+        {
+            "extension_id": "gnhhdgbaldcilmgcpfddgdbkhjohddkj",
+            "value": "\"0.00\"",
+            "key": "debugVerbosity"
+},
+        {
+            "extension_id": "gnhhdgbaldcilmgcpfddgdbkhjohddkj",
+            "value": "14",
+            "key": "checkIntervalTimeout"
+},
+        {
+            "extension_id": "gnhhdgbaldcilmgcpfddgdbkhjohddkj",
+            "value": "500",
+            "key": "checkInterval"
+},
+        {
+            "extension_id": "gnhhdgbaldcilmgcpfddgdbkhjohddkj",
+            "value": "[{\"id\":\"0\",\"name\":\"default\",\"selected\":true,\"url\":\"\"},{\"id\":\"1\",\"name\":\"appspot\",\"url\":\"https://chrome-devtools-frontend.appspot.com/serve_file/@548c459fb7741b83bd517b12882f533b04a5513e/inspector.html\"},{\"id\":\"2\",\"name\":\"june07\",\"url\":\"https://chrome-devtools-frontend.june07.com/front_end/inspector.html\"},{\"id\":\"3\",\"name\":\"custom\",\"url\":\"\"}]",
+            "key": "localDevToolsOptions"
+},
+        {
+            "extension_id": "gnhhdgbaldcilmgcpfddgdbkhjohddkj",
+            "value": "{\"name\":\"Port\",\"type\":\"port\"}",
+            "key": "autoIncrement"
+},
+        {
+            "extension_id": "gnhhdgbaldcilmgcpfddgdbkhjohddkj",
+            "value": "{\"lastHMAC\":0,\"showMessage\":false}",
+            "key": "notifications"
+},
+        {
+            "extension_id": "gnhhdgbaldcilmgcpfddgdbkhjohddkj",
+            "value": "true",
+            "key": "localDevTools"
+},
+        {
+            "extension_id": "gnhhdgbaldcilmgcpfddgdbkhjohddkj",
+            "value": "false",
+            "key": "DEVEL"
+},
+        {
+            "extension_id": "gnhhdgbaldcilmgcpfddgdbkhjohddkj",
+            "value": "false",
+            "key": "newWindow"
+},
+        {
+            "extension_id": "gnhhdgbaldcilmgcpfddgdbkhjohddkj",
+            "value": "true",
+            "key": "tabActive"
+},
+        {
+            "extension_id": "gnhhdgbaldcilmgcpfddgdbkhjohddkj",
+            "value": "false",
+            "key": "autoClose"
+},
+        {
+            "extension_id": "gnhhdgbaldcilmgcpfddgdbkhjohddkj",
+            "value": "false",
+            "key": "collaboration"
+},
+        {
+            "extension_id": "gnhhdgbaldcilmgcpfddgdbkhjohddkj",
+            "value": "true",
+            "key": "chromeNotifications"
+},
+        {
+            "extension_id": "gnhhdgbaldcilmgcpfddgdbkhjohddkj",
+            "value": "true",
+            "key": "windowFocused"
+},
+        {
+            "extension_id": "gnhhdgbaldcilmgcpfddgdbkhjohddkj",
+            "value": "10000",
+            "key": "remoteProbeInterval"
+},
+        {
+            "extension_id": "gnhhdgbaldcilmgcpfddgdbkhjohddkj",
+            "value": "\"127.0.0.1\"",
+            "key": "host"
+},
+        {
+            "extension_id": "gnhhdgbaldcilmgcpfddgdbkhjohddkj",
+            "value": "\"1337\"",
+            "key": "port"
+},
+        {
+            "extension_id": "gnhhdgbaldcilmgcpfddgdbkhjohddkj",
+            "value": "true",
+            "key": "auto"
+}
+    ]
+}
