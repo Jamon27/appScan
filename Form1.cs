@@ -82,21 +82,28 @@ namespace Подключение_к_БД_ver_2._0
         //проверка активного процесса
         private void getCurrentRunningAppName()
         {
-            Int32 hwnd = 0;
-            hwnd = GetForegroundWindow();
-            string appProcessName = Process.GetProcessById(GetWindowProcessID(hwnd)).ProcessName;
-            string appExePath = Process.GetProcessById(GetWindowProcessID(hwnd)).MainModule.FileName;
-            string appExeName = appExePath.Substring(appExePath.LastIndexOf(@"\") + 1);
-            if (appExeName == "chrome.exe")
+            try
             {
-                getCurrentURL();           
-            }
-            else
-            { 
-                textBox1.Text = appProcessName + " | " + appExePath + " | " + appExeName;
+                Int32 hwnd = 0;
+                hwnd = GetForegroundWindow();
+                string appProcessName = Process.GetProcessById(GetWindowProcessID(hwnd)).ProcessName;
+                string appExePath = Process.GetProcessById(GetWindowProcessID(hwnd)).MainModule.FileName;
+                string appExeName = appExePath.Substring(appExePath.LastIndexOf(@"\") + 1);
+                if (appExeName == "chrome.exe")
+                {
+                    getCurrentURL();           
+                }
+                else
+                { 
+                    textBox1.Text = appProcessName + " | " + appExePath + " | " + appExeName;
                 
+                }
+                Console.WriteLine(teller);
             }
-            Console.WriteLine(teller);        
+            catch (Exception ex)
+            {
+                MessageBox.Show("Error: " + ex);
+            }
         }
 
 
@@ -104,45 +111,59 @@ namespace Подключение_к_БД_ver_2._0
       
         public void getCurrentURL()
         {
-            // переребор по процессам гугл хрома, а затем поиск элемента "Адресная строка и строка поиска"           
-            Process[] procsChrome = Process.GetProcessesByName("chrome");
-            foreach (Process chrome in procsChrome)
+            try
             {
-                //Проверка что хром живой
-                if (chrome.MainWindowHandle == IntPtr.Zero)
+                // переребор по процессам гугл хрома, а затем поиск элемента "Адресная строка и строка поиска"           
+                Process[] procsChrome = Process.GetProcessesByName("chrome");
+                foreach (Process chrome in procsChrome)
                 {
-                    continue;
-                }
-
-                // ищем элемент Адресная строка и строка поиска
-                AutomationElement elm = AutomationElement.FromHandle(chrome.MainWindowHandle);
-                AutomationElement elmUrlBar = elm.FindFirst(TreeScope.Subtree,
-                  new PropertyCondition(AutomationElement.NameProperty, "Адресная строка и строка поиска"));
-
-                // Если нашли, получаем url
-                if (elmUrlBar != null)
-                {
-                    AutomationPattern[] patterns = elmUrlBar.GetSupportedPatterns();
-                   if (patterns.Length > 0)
+                    //Проверка что хром живой
+                    if (chrome.MainWindowHandle == IntPtr.Zero)
                     {
-                        ValuePattern val = (ValuePattern)elmUrlBar.GetCurrentPattern(patterns[0]);
-                        parseURL(val.Current.Value);
-                        //textBox1.Text = "Chrome URL found: " + val.Current.Value;//url = 
+                        continue;
+                    }
+
+                    // ищем элемент Адресная строка и строка поиска
+                    AutomationElement elm = AutomationElement.FromHandle(chrome.MainWindowHandle);
+                    AutomationElement elmUrlBar = elm.FindFirst(TreeScope.Subtree,
+                      new PropertyCondition(AutomationElement.NameProperty, "Адресная строка и строка поиска"));
+
+                    // Если нашли, получаем url
+                    if (elmUrlBar != null)
+                    {
+                        AutomationPattern[] patterns = elmUrlBar.GetSupportedPatterns();
+                        if (patterns.Length > 0)
+                        {
+                            ValuePattern val = (ValuePattern)elmUrlBar.GetCurrentPattern(patterns[0]);
+                            parseURL(val.Current.Value);
+                            //textBox1.Text = "Chrome URL found: " + val.Current.Value;//url = 
+                        }
                     }
                 }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("Error: "+ ex);
             }
         } //возвращает текущий URL
         public void parseURL(string url)
         {
-            if (url!="") { 
-                int firstChar = url.IndexOf("://")+3;
-                int secondChar = url.IndexOf("/", firstChar);
-                int lengthOfWord = secondChar - firstChar;
-                url = url.Substring(firstChar, lengthOfWord);
-                textBox1.Text = "Google Chrome URL found: " + url;
-            } else
+            try
+            {   
+                if (url!="") { 
+                    int firstChar = url.IndexOf("://")+3;
+                    int secondChar = url.IndexOf("/", firstChar);
+                    int lengthOfWord = secondChar - firstChar;
+                    url = url.Substring(firstChar, lengthOfWord);
+                    textBox1.Text = "Google Chrome URL found: " + url;
+                } else
+                {
+                    textBox1.Text = "Google Chrome";
+                }
+            }
+            catch (Exception ex)
             {
-                textBox1.Text = "Google Chrome";
+                MessageBox.Show("Error: " + ex);
             }
         }
 
@@ -153,23 +174,30 @@ namespace Подключение_к_БД_ver_2._0
         }
 
         private void button3_Click(object sender, EventArgs e)
-        {
-            string baseName = "timeLog.db3";            
-            if (File.Exists(baseName))
-            {
-                Console.WriteLine("There is file " + baseName);
-            }
-            else
-            {
-                SQLiteConnection.CreateFile(baseName);
-            }
+        {   
+            try
+            { 
+                string baseName = "timeLog.db3";            
+                if (File.Exists(baseName))
+                {
+                    Console.WriteLine("There is file " + baseName);
+                }
+                else
+                {
+                    SQLiteConnection.CreateFile(baseName);
+                }
 
-            if (liteConnection.State.ToString()=="Closed")
-            {
-                liteConnection.ConnectionString = @"Data Source = " + baseName;
-                liteConnection.Open();
+                if (liteConnection.State.ToString()=="Closed")
+                {
+                    liteConnection.ConnectionString = @"Data Source = " + baseName;
+                    liteConnection.Open();
+                }
             }
-
+            catch (SQLiteException ex)
+            {
+                
+                MessageBox.Show("Error: " + ex.Message);
+            }
 
 
 
