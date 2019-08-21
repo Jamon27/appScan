@@ -176,32 +176,44 @@ namespace Подключение_к_БД_ver_2._0
         private void button3_Click(object sender, EventArgs e)
         {   
             try
-            { 
-                string baseName = "timeLog.db3";            
-                if (File.Exists(baseName))
-                {
-                    Console.WriteLine("There is file " + baseName);
-                }
-                else
-                {
-                    SQLiteConnection.CreateFile(baseName);
-                }
-
-                if (liteConnection.State.ToString()=="Closed")
-                {
-                    liteConnection.ConnectionString = @"Data Source = " + baseName;
-                    liteConnection.Open();
-                }
-            }
-            catch (SQLiteException ex)
             {
-                
-                MessageBox.Show("Error: " + ex.Message);
+                initSQLite();
+                SQLiteCommand selectFromDB = new SQLiteCommand();
+                //selectFromDB.Connection = liteConnection;
+                //selectFromDB.CommandText = "create table if not exists (row_id integer primary key autoincrement, app_name nvarchar(255), time_start datetime, time_end datetime, duration datetime)";
+                //selectFromDB.ExecuteNonQuery();
+            }
+           catch (SQLiteException ex)
+            {  
+               MessageBox.Show("Error: " + ex.Message);
+            }
+        }
+
+        public void initSQLite () //initializing SQLite
+        {
+            string baseName = "main.db3";
+            if (File.Exists(baseName))
+            {
+                Console.WriteLine("There is file " + baseName);
+            }
+            else
+            {
+                SQLiteConnection.CreateFile(baseName);
             }
 
+            if (liteConnection.State.ToString() == "Closed")
+            {
+                liteConnection.ConnectionString = @"Data Source = " + baseName;
+                liteConnection.Open();
+            }
 
-
-
+            if (liteConnection.State.ToString() == "Open")
+            {
+                SQLiteCommand createDb = new SQLiteCommand();
+                createDb.Connection = liteConnection;
+                createDb.CommandText = "create table if not exists time_log(row_id integer primary key autoincrement, app_name nvarchar(255), time_start datetime, time_end datetime, duration datetime)";
+                createDb.ExecuteNonQuery();
+            }
         }
     }
 }
