@@ -177,8 +177,12 @@ namespace Подключение_к_БД_ver_2._0
         {   
             try
             {
+                
                 initSQLite();
-                SQLiteCommand selectFromDB = new SQLiteCommand();
+                SQLiteCommand timeLogInsert = new SQLiteCommand();
+                timeLogInsert.Connection = liteConnection;
+                timeLogInsert.CommandText = "Insert into time_log (app_name,time_start,time_end) Values ('chrome.exe', datetime(), datetime())";
+                timeLogInsert.ExecuteNonQuery();
                 //selectFromDB.Connection = liteConnection;
                 //selectFromDB.CommandText = "create table if not exists (row_id integer primary key autoincrement, app_name nvarchar(255), time_start datetime, time_end datetime, duration datetime)";
                 //selectFromDB.ExecuteNonQuery();
@@ -211,9 +215,30 @@ namespace Подключение_к_БД_ver_2._0
             {
                 SQLiteCommand createDb = new SQLiteCommand();
                 createDb.Connection = liteConnection;
-                createDb.CommandText = "create table if not exists time_log(row_id integer primary key autoincrement, app_name nvarchar(255), time_start datetime, time_end datetime, duration datetime)";
+                createDb.CommandText = "create table if not exists time_log(row_id integer primary key autoincrement, app_name TEXT, time_start TEXT, time_end TEXT, duration TEXT)";
                 createDb.ExecuteNonQuery();
             }
         }
+
+        private void formClosing(object sender, FormClosingEventArgs e) //Closing form listener
+        {
+            e.Cancel = true;
+            //insert into query
+            Environment.Exit(0);
+
+        }
     }
 }
+
+
+/*
+ start script:
+ Insert Into time_log ([app_name],[time_start]) Values()
+ second script:
+ Insert into time_log ([app_name],[time_start]) Values()
+ Update time_log set time_end = (select time_start from time_log where row_id=MAX(row_id) where row_id = (MAX(row_id)-1)
+ --trigger
+ Exit script:
+ Update time_log set time_end = '' where row_id = MAX(row_id)
+
+ */
