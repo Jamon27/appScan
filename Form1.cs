@@ -28,7 +28,11 @@ namespace Подключение_к_БД_ver_2._0
         [DllImport("user32")]
         private static extern UInt32 GetWindowThreadProcessId(Int32 hWnd, out Int32 lpdwProcessId);
 
-        private int teller = 0;
+        string appName = "";
+        string tempAppName = "";
+        Boolean flagOnStart = true;
+
+        private int teller = 0; //служит для таймера
 
         public Form1()
         {
@@ -65,10 +69,8 @@ namespace Подключение_к_БД_ver_2._0
             if (teller == 1)
             {
                 Console.WriteLine("teller==10");
-                //getCurrentURL();
                 Console.WriteLine("DONE!");
                 getCurrentRunningAppName();
-                //timer1.Stop();
                 teller = 0;
             }
             
@@ -89,16 +91,26 @@ namespace Подключение_к_БД_ver_2._0
                 string appProcessName = Process.GetProcessById(GetWindowProcessID(hwnd)).ProcessName;
                 string appExePath = Process.GetProcessById(GetWindowProcessID(hwnd)).MainModule.FileName;
                 string appExeName = appExePath.Substring(appExePath.LastIndexOf(@"\") + 1);
+                
+
                 if (appExeName == "chrome.exe")
                 {
+                    tempAppName = "chrome.exe";
                     getCurrentURL();           
                 }
                 else
-                { 
+                {
+                    tempAppName = appProcessName + " | " + appExePath + " | " + appExeName;
                     textBox1.Text = appProcessName + " | " + appExePath + " | " + appExeName;
-                
                 }
-                Console.WriteLine(teller);
+
+                if (appName != tempAppName)
+                {
+                    appName = tempAppName;
+                    writeToDB();
+                    //Здесь вызов процедуры для записи в БД
+                }
+
             }
             catch (Exception ex)
             {
@@ -155,9 +167,12 @@ namespace Подключение_к_БД_ver_2._0
                     int secondChar = url.IndexOf("/", firstChar);
                     int lengthOfWord = secondChar - firstChar;
                     url = url.Substring(firstChar, lengthOfWord);
-                    textBox1.Text = "Google Chrome URL found: " + url;
+                    tempAppName = "Google Chrome: " + url;
+                    textBox1.Text = "Google Chrome: " + url;
+
                 } else
                 {
+                    tempAppName = "Google Chrome";
                     textBox1.Text = "Google Chrome";
                 }
             }
@@ -165,35 +180,39 @@ namespace Подключение_к_БД_ver_2._0
             {
                 MessageBox.Show("Error: " + ex);
             }
+
         }
 
-            private void button2_Click(object sender, EventArgs e)
+
+        public void writeToDB ()
         {
-            timer1.Start();
-           
+            /*
+             * if (flagOnStart) 
+             * {
+             * flagOnStart = false;
+             * "Insert Into time_log ([app_name],[time_start]) Values(" + appName +", datetime(current_timestamp)"
+             * 
+             * }
+             * else 
+             * {
+             * "Update time_log Set time_end = datetime(current_timestamp) where row_id = MAX(row_id)"//update time end
+             * "Update time_log Set duration = (Select (Cast ((JulianDay(time_start) - JulianDay(time_end)) * 24 * 60 * 60 As Integer))) where row_id = MAX(row_id)" //update duration
+             *      
+             * "Insert Into time_log ([app_name],[time_start]) Values(" + appName +", datetime(current_timestamp)"//insert
+             * 
+             * }
+            Insert Into time_log ([app_name],[time_start]) Values()
+            second script:
+            Insert into time_log ([app_name],[time_start]) Values()
+            Update time_log set time_end = (select time_start from time_log where row_id=MAX(row_id) where row_id = (MAX(row_id)-1)
+            --trigger
+            Exit script:
+            Update time_log set time_end = '' where row_id = MAX(row_id)
+
+            */
         }
 
-        private void button3_Click(object sender, EventArgs e)
-        {   
-            try
-            {
-                
-                initSQLite();
-                SQLiteCommand timeLogInsert = new SQLiteCommand();
-                timeLogInsert.Connection = liteConnection;
-                timeLogInsert.CommandText = "Insert into time_log (app_name,time_start,time_end) Values ('chrome.exe', datetime(), datetime())";
-                timeLogInsert.ExecuteNonQuery();
-                //selectFromDB.Connection = liteConnection;
-                //selectFromDB.CommandText = "create table if not exists (row_id integer primary key autoincrement, app_name nvarchar(255), time_start datetime, time_end datetime, duration datetime)";
-                //selectFromDB.ExecuteNonQuery();
-            }
-           catch (SQLiteException ex)
-            {  
-               MessageBox.Show("Error: " + ex.Message);
-            }
-        }
-
-        public void initSQLite () //initializing SQLite
+        public void initSQLite() //initializing SQLite
         {
             string baseName = "main.db3";
             if (File.Exists(baseName))
@@ -222,13 +241,68 @@ namespace Подключение_к_БД_ver_2._0
 
         private void formClosing(object sender, FormClosingEventArgs e) //Closing form listener
         {
-            e.Cancel = true;
-            //insert into query
-            Environment.Exit(0);
+            try
+            { 
+                e.Cancel = true;
+                //insert into query
+                try
+                { 
+                    SQLiteCommand closingAppCommand = new SQLiteCommand();
+                    if (!flagOnStart)
+                    { 
+                        closingAppCommand.Connection = liteConnection;
+                        closingAppCommand.CommandText = "Update time_log Set time_end = datetime(current_timestamp) where row_id = MAX(row_id)";
+                        closingAppCommand.ExecuteNonQuery();
+                    }
+                }
+                catch (SQLiteException ex)
+                {
+                    MessageBox.Show("Error: " + ex.Message);
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("Error: " + ex.Message);
+            }
+            finally
+            {
+                Environment.Exit(0);
+            }
 
+        }
+
+        private void button2_Click(object sender, EventArgs e)
+        {
+            timer1.Start();
+
+        }
+
+        private void button3_Click(object sender, EventArgs e)
+        {
+            try
+            {
+
+                initSQLite();
+                SQLiteCommand timeLogInsert = new SQLiteCommand();
+                timeLogInsert.Connection = liteConnection;
+                timeLogInsert.CommandText = "Insert into time_log (app_name,time_start,time_end) Values ('chrome.exe', datetime(), datetime())";
+                timeLogInsert.ExecuteNonQuery();
+                //selectFromDB.Connection = liteConnection;
+                //selectFromDB.CommandText = "create table if not exists (row_id integer primary key autoincrement, app_name nvarchar(255), time_start datetime, time_end datetime, duration datetime)";
+                //selectFromDB.ExecuteNonQuery();
+            }
+            catch (SQLiteException ex)
+            {
+                MessageBox.Show("Error: " + ex.Message);
+            }
         }
     }
 }
+
+
+
+
+
 
 
 /*
