@@ -21,6 +21,8 @@ namespace Подключение_к_БД_ver_2._0
     public partial class Form1 : Form
     {
         SQLiteConnection liteConnection = new SQLiteConnection();
+        SQLiteCommand workWithDB = new SQLiteCommand();
+        
 
         [DllImport("user32.dll")]
         static extern int GetForegroundWindow();
@@ -119,8 +121,7 @@ namespace Подключение_к_БД_ver_2._0
         }
 
 
-
-      
+  
         public void getCurrentURL()
         {
             try
@@ -158,7 +159,7 @@ namespace Подключение_к_БД_ver_2._0
                 MessageBox.Show("Error: "+ ex);
             }
         } //возвращает текущий URL
-        public void parseURL(string url)
+        public void parseURL(string url)//todo: parse file:c// ...
         {
             try
             {   
@@ -186,33 +187,31 @@ namespace Подключение_к_БД_ver_2._0
 
         public void writeToDB ()
         {
-            /*
-             * if (flagOnStart) 
-             * {
-             * flagOnStart = false;
-             * "Insert Into time_log ([app_name],[time_start]) Values(" + appName +", datetime(current_timestamp)"
-             * 
-             * }
-             * else 
-             * {
-             * "Update time_log Set time_end = datetime(current_timestamp) where row_id = MAX(row_id)"//update time end
-             * "Update time_log Set duration = (Select (Cast ((JulianDay(time_start) - JulianDay(time_end)) * 24 * 60 * 60 As Integer))) where row_id = MAX(row_id)" //update duration
-             *      
-             * "Insert Into time_log ([app_name],[time_start]) Values(" + appName +", datetime(current_timestamp)"//insert
-             * 
-             * }
-            Insert Into time_log ([app_name],[time_start]) Values()
-            second script:
-            Insert into time_log ([app_name],[time_start]) Values()
-            Update time_log set time_end = (select time_start from time_log where row_id=MAX(row_id) where row_id = (MAX(row_id)-1)
-            --trigger
-            Exit script:
-            Update time_log set time_end = '' where row_id = MAX(row_id)
-
-            */
+            try
+            {
+                if (flagOnStart)
+                {
+                    flagOnStart = false;
+                    workWithDB.CommandText = "Insert Into time_log ([app_name],[time_start]) Values(" + appName + ", datetime(current_timestamp)"; //insert new row to time log
+                    workWithDB.ExecuteNonQuery();
+                }
+                else
+                {
+                    workWithDB.CommandText = "Update time_log Set time_end = datetime(current_timestamp) where row_id = MAX(row_id)"; //update time end
+                    workWithDB.ExecuteNonQuery();
+                    workWithDB.CommandText = "Update time_log Set duration = (Select (Cast ((JulianDay(time_start) - JulianDay(time_end)) * 24 * 60 * 60 As Integer))) where row_id = MAX(row_id)";//update duration
+                    workWithDB.ExecuteNonQuery();
+                    workWithDB.CommandText = "Insert Into time_log ([app_name],[time_start]) Values(" + appName + ", datetime(current_timestamp)";//insert new row to time log
+                    workWithDB.ExecuteNonQuery();
+                }
+            }
+            catch (SQLiteException ex)
+            {
+                MessageBox.Show("Error: " + ex);
+            }
         }
 
-        public void initSQLite() //initializing SQLite
+            public void initSQLite() //initializing SQLite
         {
             string baseName = "main.db3";
             if (File.Exists(baseName))
@@ -237,6 +236,7 @@ namespace Подключение_к_БД_ver_2._0
                 createDb.CommandText = "create table if not exists time_log(row_id integer primary key autoincrement, app_name TEXT, time_start TEXT, time_end TEXT, duration TEXT)";
                 createDb.ExecuteNonQuery();
             }
+            workWithDB.Connection = liteConnection;
         }
 
         private void formClosing(object sender, FormClosingEventArgs e) //Closing form listener
