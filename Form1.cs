@@ -49,31 +49,17 @@ namespace Подключение_к_БД_ver_2._0
            
 
                 timer1.Start();
-                
-            
 
-           // foreach (Process p in processes)
-           // {
-                
-                
-            //    if (!String.IsNullOrEmpty(p.MainWindowTitle))
-           //     {
-            //        string output;
-            //        output = p.MainWindowTitle + " " + p.StartTime.ToString();
-             //       listBox1.Items.Add(output);
-                    
-             //   }
-           // }
         }
 
         private void timer1_Tick(object sender, EventArgs e)
         {
-            Console.WriteLine("back in da buisness");
+            //Console.WriteLine("back in da buisness");
             teller++;
             if (teller == 1)
             {
-                Console.WriteLine("teller==10");
-                Console.WriteLine("DONE!");
+                //Console.WriteLine("teller==10");
+                //Console.WriteLine("DONE!");
                 getCurrentRunningAppName();
                 teller = 0;
             }
@@ -88,26 +74,32 @@ namespace Подключение_к_БД_ver_2._0
         //проверка активного процесса
         private void getCurrentRunningAppName()
         {
-            try
-            {
+            try { 
                 Int32 hwnd = 0;
                 hwnd = GetForegroundWindow();
-                string appProcessName = Process.GetProcessById(GetWindowProcessID(hwnd)).ProcessName;
-                string appExePath = Process.GetProcessById(GetWindowProcessID(hwnd)).MainModule.FileName;
-                string appExeName = appExePath.Substring(appExePath.LastIndexOf(@"\") + 1);
+                Console.WriteLine(hwnd);
+                if (hwnd!=0)
+                { 
+                    string appProcessName = Process.GetProcessById(GetWindowProcessID(hwnd)).ProcessName;
+                    string appExePath = Process.GetProcessById(GetWindowProcessID(hwnd)).MainModule.FileName;
+                    string appExeName = appExePath.Substring(appExePath.LastIndexOf(@"\") + 1);
                 
 
-                if (appExeName == "chrome.exe")
-                {
-                    tempAppName = "chrome.exe";
-                    getCurrentURL();           
+                    if (appExeName == "chrome.exe")
+                    {
+                        tempAppName = "chrome.exe";
+                        getCurrentURL();           
+                    }
+                    else
+                    {
+                        tempAppName = appExeName;
+                        textBox1.Text = appProcessName + " | " + appExePath + " | " + appExeName;
+                    }
                 }
                 else
                 {
-                    tempAppName = appExeName;
-                    textBox1.Text = appProcessName + " | " + appExePath + " | " + appExeName;
+                    tempAppName = "ID: " + hwnd;
                 }
-
                 if (appName != tempAppName)
                 {
                     appName = tempAppName;
@@ -118,7 +110,7 @@ namespace Подключение_к_БД_ver_2._0
             }
             catch (Exception ex)
             {
-                MessageBox.Show("Error: " + ex);
+               MessageBox.Show("Error: " + ex);
             }
         }
 
@@ -163,26 +155,29 @@ namespace Подключение_к_БД_ver_2._0
         } //возвращает текущий URL
         public void parseURL(string url)//todo: parse file:c// ...
         {
-            try
+           try
             {   
-                if (url!="") { 
+                if (url!="")
+                { 
                     int firstChar = url.IndexOf("://")+3;
                     int secondChar = url.IndexOf("/", firstChar);
                     int lengthOfWord = secondChar - firstChar;
-                    url = url.Substring(firstChar, lengthOfWord);
-                    tempAppName = "Google Chrome: " + url;
-                    textBox1.Text = "Google Chrome: " + url;
-
+                    if (lengthOfWord > 0)
+                    { 
+                        url = url.Substring(firstChar, lengthOfWord);
+                        tempAppName = "Google Chrome: " + url;
+                        textBox1.Text = "Google Chrome: " + url;
+                    }
                 } else
                 {
                     tempAppName = "Google Chrome";
                     textBox1.Text = "Google Chrome";
                 }
-            }
-            catch (Exception ex)
-            {
-                MessageBox.Show("Error: " + ex);
-            }
+           }
+           catch (Exception ex)
+           {
+               MessageBox.Show("Error: " + ex);
+           }
 
         }
 
