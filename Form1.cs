@@ -74,7 +74,7 @@ namespace Подключение_к_БД_ver_2._0
         //проверка активного процесса
         private void getCurrentRunningAppName()
         {
-            try { 
+          //  try { 
                 Int32 hwnd = 0;
                 hwnd = GetForegroundWindow();
                 Console.WriteLine(hwnd);
@@ -107,19 +107,19 @@ namespace Подключение_к_БД_ver_2._0
                     //Здесь вызов процедуры для записи в БД
                 }
 
-            }
-            catch (Exception ex)
-            {
-               MessageBox.Show("Error: " + ex);
-            }
+           // }
+           // catch (Exception ex)
+           // {
+           //    MessageBox.Show("Error: " + ex);
+           // }
         }
 
 
   
         public void getCurrentURL()
         {
-            try
-            {
+           // try
+           // {
                 // переребор по процессам гугл хрома, а затем поиск элемента "Адресная строка и строка поиска"           
                 Process[] procsChrome = Process.GetProcessesByName("chrome");
                 foreach (Process chrome in procsChrome)
@@ -147,17 +147,17 @@ namespace Подключение_к_БД_ver_2._0
                         }
                     }
                 }
-            }
-            catch (Exception ex)
-            {
-                MessageBox.Show("Error: "+ ex);
-            }
+           // }
+           // catch (Exception ex)
+           // {
+           //     MessageBox.Show("Error: "+ ex);
+            //}
         } //возвращает текущий URL
         public void parseURL(string url)//todo: parse file:c// ...
         {
-           try
-            {   
-                if (url!="")
+            // try
+            // {   
+            if (url != "" & url.Length>3)
                 { 
                     int firstChar = url.IndexOf("://")+3;
                     int secondChar = url.IndexOf("/", firstChar);
@@ -173,11 +173,11 @@ namespace Подключение_к_БД_ver_2._0
                     tempAppName = "Google Chrome";
                     textBox1.Text = "Google Chrome";
                 }
-           }
-           catch (Exception ex)
-           {
-               MessageBox.Show("Error: " + ex);
-           }
+          // }
+          // catch (Exception ex)
+           //{
+           //    MessageBox.Show("Error: " + ex);
+          // }
 
         }
 
