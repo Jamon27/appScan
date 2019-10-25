@@ -22,7 +22,8 @@ namespace Подключение_к_БД_ver_2._0
     {
         SQLiteConnection liteConnection = new SQLiteConnection();
         SQLiteCommand workWithDB = new SQLiteCommand();
-        
+        SQLiteDataAdapter adapter;
+        DataSet ds;
 
         [DllImport("user32.dll")]
         static extern int GetForegroundWindow();
@@ -41,6 +42,7 @@ namespace Подключение_к_БД_ver_2._0
             InitializeComponent();
             initSQLite();
             timer1.Start();
+            
         }
         //
         private void button1_Click(object sender, EventArgs e)
@@ -62,6 +64,8 @@ namespace Подключение_к_БД_ver_2._0
                 //Console.WriteLine("DONE!");
                 getCurrentRunningAppName();
                 teller = 0;
+                label4.Text = startDate.Value.ToString("yyyy-MM-dd") + " 00:00:00";
+                label5.Text = finishDate.Value.ToString("yyyy-MM-dd") + " 23:59:59";
             }
             
         }
@@ -153,11 +157,12 @@ namespace Подключение_к_БД_ver_2._0
            //     MessageBox.Show("Error: "+ ex);
             //}
         } //возвращает текущий URL
-        public void parseURL(string url)//todo: parse file:c// ...
+        public void parseURL(string url)
         {
             // try
-            url = url.Replace("https://", "").Replace("http://", "").Replace("www.", "");
+
             // {   
+            url = url.Replace("https://", "").Replace("http://", "").Replace("www.", "");
             if (url != "" & url.IndexOf(":/")<0)
                 {
                 int startIndex = 0;
@@ -214,9 +219,9 @@ namespace Подключение_к_БД_ver_2._0
             }
         }
 
-            public void initSQLite() //initializing SQLite
+        public void initSQLite() //initializing SQLite
         {
-            string baseName = "main.db3";
+            string baseName = "main.db3"; //creating db
             if (File.Exists(baseName))
             {
                 Console.WriteLine("There is file " + baseName);
@@ -226,13 +231,13 @@ namespace Подключение_к_БД_ver_2._0
                 SQLiteConnection.CreateFile(baseName);
             }
 
-            if (liteConnection.State.ToString() == "Closed")
+            if (liteConnection.State.ToString() == "Closed") //openning the db
             {
                 liteConnection.ConnectionString = @"Data Source = " + baseName;
                 liteConnection.Open();
             }
 
-            if (liteConnection.State.ToString() == "Open")
+            if (liteConnection.State.ToString() == "Open") //creating table(s)
             {
                 SQLiteCommand createDb = new SQLiteCommand();
                 createDb.Connection = liteConnection;
@@ -302,12 +307,18 @@ namespace Подключение_к_БД_ver_2._0
                 MessageBox.Show("Error: " + ex.Message);
             }
         }
-/*
-        private void chart1_Click(object sender, EventArgs e)
+
+        private void getReport_Click(object sender, EventArgs e)
         {
-            chart1.Series[0].ChartType = System.Windows.Forms.DataVisualization.Charting.SeriesChartType.Pie;
+            string startDateString = startDate.Value.ToString("yyyy-MM-dd") + " 00:00:00";
+            string finishDateString = finishDate.Value.ToString("yyyy-MM-dd") + " 23:59:59";
+            string selectDuration = "SELECT app_name, duration FROM time_log WHERE time_start >= '" + startDateString + "' AND time_end <= '" + finishDateString + "'";
+            selectDuration = selectDuration + " GROUP BY app_name order by duration";
+            adapter = new SQLiteDataAdapter(selectDuration, liteConnection);
+            ds = new System.Data.DataSet();
+            adapter.Fill(ds);
+            dataGridView1.DataSource = ds.Tables[0];
         }
-*/
     }
 }
 
@@ -326,5 +337,9 @@ namespace Подключение_к_БД_ver_2._0
  --trigger
  Exit script:
  Update time_log set time_end = '' where row_id = MAX(row_id)
+                 abct = startDate.Value.ToString("yyyy-MM-dd") + " 00:00:00";
+                labc = finishDate.Value.ToString("yyyy-MM-dd") + " 23:59:59";
+
+select * from time_log where time_start = abct and time_end = labc;
 
  */
