@@ -156,23 +156,29 @@ namespace Подключение_к_БД_ver_2._0
         public void parseURL(string url)//todo: parse file:c// ...
         {
             // try
+            url = url.Replace("https://", "").Replace("http://", "").Replace("www.", "");
             // {   
-            if (url != "" & url.Length>3)
-                { 
-                    int firstChar = url.IndexOf("://")+3;
-                    int secondChar = url.IndexOf("/", firstChar);
-                    int lengthOfWord = secondChar - firstChar;
-                    if (lengthOfWord > 0)
-                    { 
-                        url = url.Substring(firstChar, lengthOfWord);
-                        tempAppName = "Google Chrome: " + url;
-                        textBox1.Text = "Google Chrome: " + url;
-                    }
-                } else
+            if (url != "" & url.IndexOf(":/")<0)
                 {
-                    tempAppName = "Google Chrome";
-                    textBox1.Text = "Google Chrome";
+                int startIndex = 0;
+                int stopIndex = url.IndexOf("/");
+                if (stopIndex > 0)
+                { 
+                    url = url.Substring(startIndex, stopIndex);
+                    tempAppName = "Google Chrome: " + url;
+                    textBox1.Text = "Google Chrome: " + url;
                 }
+                else
+                {
+                    url = url.Substring(startIndex);
+                    tempAppName = "Google Chrome: " + url;
+                    textBox1.Text = "Google Chrome: " + url;
+                }
+            } else
+            {
+                tempAppName = "Google Chrome";
+                textBox1.Text = "Google Chrome";
+            }
           // }
           // catch (Exception ex)
            //{
@@ -182,7 +188,7 @@ namespace Подключение_к_БД_ver_2._0
         }
 
 
-        public void writeToDB ()
+        public void writeToDB () //запись в БД
         {
             try
             {
@@ -296,6 +302,12 @@ namespace Подключение_к_БД_ver_2._0
                 MessageBox.Show("Error: " + ex.Message);
             }
         }
+/*
+        private void chart1_Click(object sender, EventArgs e)
+        {
+            chart1.Series[0].ChartType = System.Windows.Forms.DataVisualization.Charting.SeriesChartType.Pie;
+        }
+*/
     }
 }
 
