@@ -15,7 +15,7 @@ using System.Data.SQLite;
 using System.IO;
 
 
-//TO DO: fix logging into console
+//TO DO: fix logging into console and fix time calculation and fix updating duration after restart
 namespace Подключение_к_БД_ver_2._0
 {
     public partial class Form1 : Form
@@ -105,7 +105,14 @@ namespace Подключение_к_БД_ver_2._0
                 }
                 else
                 {
-                    tempAppName = "ID: " + hwnd;
+                    if (hwnd == 0)
+                    {
+                        tempAppName = "Logged off";
+                    }
+                    else
+                    { 
+                        tempAppName = "ID: " + hwnd;
+                    }
                 }
                 if (appName != tempAppName)
                 {
@@ -201,16 +208,16 @@ namespace Подключение_к_БД_ver_2._0
                 if (flagOnStart)
                 {
                     flagOnStart = false;
-                    workWithDB.CommandText = "Insert Into time_log ([app_name],[time_start]) Values ('" + appName + "', datetime(current_timestamp))"; //insert new row to time log
+                    workWithDB.CommandText = "Insert Into time_log ([app_name],[time_start]) Values ('" + appName + "', datetime(current_timestamp, 'localtime'))"; //insert new row to time log
                     workWithDB.ExecuteNonQuery();
                 }
                 else
                 {
-                    workWithDB.CommandText = "Update time_log Set time_end = datetime(current_timestamp) where row_id = (select MAX(row_id) from time_log)"; //update time end
+                    workWithDB.CommandText = "Update time_log Set time_end = datetime(current_timestamp, 'localtime') where row_id = (select MAX(row_id) from time_log)"; //update time end
                     workWithDB.ExecuteNonQuery();
-                    workWithDB.CommandText = "Update time_log Set duration = (Select (Cast ((JulianDay(time_end) - JulianDay(time_start)) * 24 * 60 * 60 As Integer))) where row_id = (select MAX(row_id) from time_log)";//update duration
+                    workWithDB.CommandText = "Update time_log Set duration = (Select (Cast (Round((JulianDay(time_end) * 24 * 60 * 60 - JulianDay(time_start)* 24 * 60 * 60),0)  As Integer))) where row_id = (select MAX(row_id) from time_log)";//update duration
                     workWithDB.ExecuteNonQuery();
-                    workWithDB.CommandText = "Insert Into time_log ([app_name],[time_start]) Values ('" + appName + "', datetime(current_timestamp))";//insert new row to time log
+                    workWithDB.CommandText = "Insert Into time_log ([app_name],[time_start]) Values ('" + appName + "', datetime(current_timestamp, 'localtime'))";//insert new row to time log
                     workWithDB.ExecuteNonQuery();
                 }
             }
@@ -240,10 +247,12 @@ namespace Подключение_к_БД_ver_2._0
 
             if (liteConnection.State.ToString() == "Open") //creating table(s)
             {
-                SQLiteCommand createDb = new SQLiteCommand();
-                createDb.Connection = liteConnection;
-                createDb.CommandText = "create table if not exists time_log(row_id integer primary key autoincrement, app_name TEXT, time_start TEXT, time_end TEXT, duration integer)";
-                createDb.ExecuteNonQuery();
+                SQLiteCommand initDb = new SQLiteCommand();
+                initDb.Connection = liteConnection;
+                initDb.CommandText = "create table if not exists time_log(row_id integer primary key autoincrement, app_name TEXT, time_start TEXT, time_end TEXT, duration integer)";
+                initDb.ExecuteNonQuery();
+                initDb.CommandText = "update time_log set duration = 0 where duration IS NULL";
+                initDb.ExecuteNonQuery();
             }
             workWithDB.Connection = liteConnection;
         }
@@ -260,9 +269,9 @@ namespace Подключение_к_БД_ver_2._0
                     if (!flagOnStart)
                     { 
                         closingAppCommand.Connection = liteConnection;
-                        closingAppCommand.CommandText = "Update time_log Set time_end = datetime(current_timestamp) where row_id = (select MAX(row_id) from time_log)";
+                        closingAppCommand.CommandText = "Update time_log Set time_end = datetime(current_timestamp, 'localtime') where row_id = (select MAX(row_id) from time_log)";
                         closingAppCommand.ExecuteNonQuery();
-                        closingAppCommand.CommandText = "Update time_log Set duration = (Select (Cast ((JulianDay(time_end) - JulianDay(time_start)) * 24 * 60 * 60 As Integer))) where row_id = (select MAX(row_id) from time_log)";//update duration
+                        closingAppCommand.CommandText = "Update time_log Set duration = (Select (Cast (Round((JulianDay(time_end)*24*60*60 - JulianDay(time_start)*24*60*60),0) As Integer))) where row_id = (select MAX(row_id) from time_log)";//update duration
                         closingAppCommand.ExecuteNonQuery();
                     }
                 }
