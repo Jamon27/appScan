@@ -15,7 +15,7 @@ using System.Data.SQLite;
 using System.IO;
 
 
-
+//TO DO: fix logging into console
 namespace Подключение_к_БД_ver_2._0
 {
     public partial class Form1 : Form
@@ -156,14 +156,15 @@ namespace Подключение_к_БД_ver_2._0
            // {
            //     MessageBox.Show("Error: "+ ex);
             //}
-        } //возвращает текущий URL
+        } 
         public void parseURL(string url)
         {
             // try
 
             // {   
             url = url.Replace("https://", "").Replace("http://", "").Replace("www.", "");
-            if (url != "" & url.IndexOf(":/")<0)
+            var match = Regex.Match(url, @"[А-я]+");
+            if (url != "" & url.IndexOf(":/")<0 & !match.Success & url.IndexOf(".")>=0)
                 {
                 int startIndex = 0;
                 int stopIndex = url.IndexOf("/");
