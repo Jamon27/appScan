@@ -85,19 +85,22 @@ namespace Подключение_к_БД_ver_2._0
                 if (hwnd!=0)
                 { 
                     string appProcessName = Process.GetProcessById(GetWindowProcessID(hwnd)).ProcessName;
-                    string appExePath = Process.GetProcessById(GetWindowProcessID(hwnd)).MainModule.FileName;
-                    string appExeName = appExePath.Substring(appExePath.LastIndexOf(@"\") + 1);
+                    
+                    if (GetWindowProcessID(hwnd) != 1) { //Fix scenario error 
+                        string appExePath = Process.GetProcessById(GetWindowProcessID(hwnd)).MainModule.FileName;
+                        string appExeName = appExePath.Substring(appExePath.LastIndexOf(@"\") + 1);
                 
 
-                    if (appExeName == "chrome.exe")
-                    {
-                        tempAppName = "chrome.exe";
-                        getCurrentURL();           
-                    }
-                    else
-                    {
-                        tempAppName = appExeName;
-                        textBox1.Text = appProcessName + " | " + appExePath + " | " + appExeName;
+                        if (appExeName == "chrome.exe")
+                        {
+                            tempAppName = "chrome.exe";
+                            getCurrentURL();           
+                        }
+                        else
+                        {
+                            tempAppName = appExeName;
+                            textBox1.Text = appProcessName + " | " + appExePath + " | " + appExeName;
+                        }
                     }
                 }
                 else
