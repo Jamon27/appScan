@@ -31,7 +31,8 @@ namespace Подключение_к_БД_ver_2._0
         [DllImport("user32")]
         private static extern UInt32 GetWindowThreadProcessId(Int32 hWnd, out Int32 lpdwProcessId);
 
-        string appName = "";
+        Boolean flagButtonShowSetting = false;
+        string appName = ""; //используется для сохранения имени приложения
         string tempAppName = "";
         Boolean flagOnStart = true;
 
@@ -291,45 +292,56 @@ namespace Подключение_к_БД_ver_2._0
 
         }
 
-        private void button2_Click(object sender, EventArgs e)
-        {
-            initSQLite();
-            timer1.Start();
-
-        }
-
-        private void button3_Click(object sender, EventArgs e)
-        {
-            try
-            {
-
-                initSQLite();
-                SQLiteCommand timeLogInsert = new SQLiteCommand();
-                timeLogInsert.Connection = liteConnection;
-                timeLogInsert.CommandText = "Insert into time_log (app_name,time_start,time_end) Values ('chrome.exe', datetime(), datetime())";
-                timeLogInsert.ExecuteNonQuery();
-                //selectFromDB.Connection = liteConnection;
-                //selectFromDB.CommandText = "create table if not exists (row_id integer primary key autoincrement, app_name nvarchar(255), time_start datetime, time_end datetime, duration datetime)";
-                //selectFromDB.ExecuteNonQuery();
-            }
-            catch (SQLiteException ex)
-            {
-                MessageBox.Show("Error: " + ex.Message);
-            }
-        }
-
         private void getReport_Click(object sender, EventArgs e)
         {
+            //После надатия клавиши завершаем запись текущего активити и начинаем по новой (Сделано для любителей понажимать 10 раз на клавишу)
+            writeToDB();
+
+
             string startDateString = startDate.Value.ToString("yyyy-MM-dd") + " 00:00:00";
             string finishDateString = finishDate.Value.ToString("yyyy-MM-dd") + " 23:59:59";
+            
             string selectDuration = "SELECT app_name, SUM(duration) as [duration, sec] FROM time_log WHERE time_start >= '" + startDateString + "' AND time_end <= '" + finishDateString + "'";
-            selectDuration = selectDuration + " GROUP BY app_name order by duration";
+            selectDuration = selectDuration + " GROUP BY app_name order by SUM(duration) desc";
             adapter = new SQLiteDataAdapter(selectDuration, liteConnection);
             ds = new System.Data.DataSet();
             adapter.Fill(ds);
 
             dataGridView1.DataSource = ds.Tables[0];
-        }
+        } //Кнопка отображения отчета
+
+        private void showSettings_Click(object sender, EventArgs e)
+        {
+            if (flagButtonShowSetting == false) {
+                flagButtonShowSetting = true;
+                showSettings.Text = "Скрыть настройки";
+                resetTable.Visible = true;
+            }
+            else
+            {
+                flagButtonShowSetting = false;
+                showSettings.Text = "Показать настройки";
+                resetTable.Visible = false;             
+            }
+        } //Кнопка отображения настроек
+
+        private void resetTable_Click(object sender, EventArgs e)
+        {
+            string caption = "Предупреждение";
+            string message = "Вы действительно хотите удалить все записи из таблицы?";
+            MessageBoxButtons buttons = MessageBoxButtons.YesNo;
+            DialogResult result;
+            // Окно с предупреждение
+            result = MessageBox.Show(message, caption, buttons);
+            if (result == System.Windows.Forms.DialogResult.Yes)
+            {
+                SQLiteCommand dropTable = new SQLiteCommand();
+                dropTable.Connection = liteConnection;
+                dropTable.CommandText = "drop table time_log";
+                dropTable.ExecuteNonQuery();
+                initSQLite();
+            }
+        } //Кнопка дропа таблицы
     }
 }
 
