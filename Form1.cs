@@ -310,7 +310,7 @@ namespace Подключение_к_БД_ver_2._0
         {
             string startDateString = startDate.Value.ToString("yyyy-MM-dd") + " 00:00:00";
             string finishDateString = finishDate.Value.ToString("yyyy-MM-dd") + " 23:59:59";
-            string selectDuration = "SELECT app_name, duration FROM time_log WHERE time_start >= '" + startDateString + "' AND time_end <= '" + finishDateString + "'";
+            string selectDuration = "SELECT app_name, SUM(duration) as [duration, sec] FROM time_log WHERE time_start >= '" + startDateString + "' AND time_end <= '" + finishDateString + "'";
             selectDuration = selectDuration + " GROUP BY app_name order by duration";
             adapter = new SQLiteDataAdapter(selectDuration, liteConnection);
             ds = new System.Data.DataSet();
