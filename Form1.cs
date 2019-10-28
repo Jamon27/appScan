@@ -116,10 +116,7 @@ namespace Подключение_к_БД_ver_2._0
            // {
            //    MessageBox.Show("Error: " + ex);
            // }
-        }
-
-
-  
+        }            
         public void getCurrentURL()
         {
            // try
@@ -242,7 +239,7 @@ namespace Подключение_к_БД_ver_2._0
             {
                 SQLiteCommand createDb = new SQLiteCommand();
                 createDb.Connection = liteConnection;
-                createDb.CommandText = "create table if not exists time_log(row_id integer primary key autoincrement, app_name TEXT, time_start TEXT, time_end TEXT, duration TEXT)";
+                createDb.CommandText = "create table if not exists time_log(row_id integer primary key autoincrement, app_name TEXT, time_start TEXT, time_end TEXT, duration integer)";
                 createDb.ExecuteNonQuery();
             }
             workWithDB.Connection = liteConnection;
@@ -318,6 +315,7 @@ namespace Подключение_к_БД_ver_2._0
             adapter = new SQLiteDataAdapter(selectDuration, liteConnection);
             ds = new System.Data.DataSet();
             adapter.Fill(ds);
+
             dataGridView1.DataSource = ds.Tables[0];
         }
     }
